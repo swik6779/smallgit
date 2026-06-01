@@ -1,8 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <sys/stat.h>
-#include <errno.h>
+#include "../include/init.h"
 
 void init_repository(){
 	char *spoon_repo = "./.spoon"; int spoon_repo_check;
@@ -65,10 +61,4 @@ void init_repository(){
 		rmdir(spoon_repo);
 		exit(EXIT_FAILURE);
 	}
-}
-
-int main(){
-	init_repository();
-	
-	return 0;
 }
