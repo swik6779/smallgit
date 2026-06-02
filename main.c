@@ -1,5 +1,6 @@
 #include "./include/init.h"
 #include "./include/hash_object.h"
+#include "./include/cat_file.h"
 
 int main(int argc, char **argv){
 	if(strcmp(argv[1], "init") == 0){
@@ -12,6 +13,15 @@ int main(int argc, char **argv){
 		}
 		else{
 			hash_object(argv[2]);
+		}
+	}
+	else if(strcmp(argv[1], "cat-file") == 0){
+		if(argc != 3){
+			fprintf(stderr, "incorrect-usage\n");
+			exit(EXIT_FAILURE);
+		}
+		else{
+			cat_file(argv[2]);
 		}
 	}
 	else{

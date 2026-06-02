@@ -152,7 +152,7 @@ void write_compressed(struct compressed_struct *cpress, char *hash_val){
 	directory_path[DIR_PATH_SIZE_CONST+2] = '/';
 	directory_path[DIR_PATH_SIZE_CONST+3] = '\0';
 	
-	printf("\ndirpath: %s", directory_path);
+	//printf("\ndirpath: %s", directory_path);
 	int dir_created = mkdir(directory_path, 0777);
 	if(dir_created != 0){
 		if(errno != EEXIST){
@@ -169,7 +169,7 @@ void write_compressed(struct compressed_struct *cpress, char *hash_val){
 		file_path[DIR_PATH_SIZE_CONST + 3 + i] = hash_val[2 + i];
 	}
 	file_path[DIR_PATH_SIZE_CONST + 1 + 40] = '\0';
-	printf("\nfilepath: %s\n", file_path);
+	//printf("\nfilepath: %s\n", file_path);
 	
 	FILE *fptr;
 	if((fptr = fopen(file_path, "wb")) == NULL){
