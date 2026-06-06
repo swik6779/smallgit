@@ -14,7 +14,8 @@
 #include <zlib.h>
 
 #define SIZE_BITS 20
-#define DIR_PATH_SIZE_CONST 17
+#define DIR_PATH "./.rec/objects/"
+#define DIR_PATH_SIZE_CONST (sizeof(DIR_PATH) - 1)
 
 struct blob_details{
 	uint8_t header_len;
@@ -29,7 +30,7 @@ struct compressed_struct{
 unsigned char *getcontnts(const char *filepath);
 struct blob_details *get_file_det(const char *buffer);
 unsigned char *sha_encoding(const unsigned char *buffer);
-struct compressed_struct *zlib_compression(const unsigned char *buffer);
+struct compressed_struct *zlib_compression(const char *buffer);
 void write_compressed(struct compressed_struct *cpress, char *hash_val);
 
 #endif

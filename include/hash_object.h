@@ -4,6 +4,6 @@
 #include "../include/object.h"
 #include "../include/utils.h"
 
-void hash_object(const char *filepath);
+char *hash_object(const char *filepath);
 
 #endif

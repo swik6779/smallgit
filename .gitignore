@@ -1,2 +1,5 @@
 # secret files
 *.secret
+
+# binaries
+*.out

@@ -12,7 +12,7 @@ unsigned char *getcontnts(const char *filepath){
 
 	size_t file_size;
 	struct stat st;
-	if(stat(filepath, &st) == 0){
+	if(0 == stat(filepath, &st)){
 		file_size = st.st_size;
 	}
 	else{
@@ -116,7 +116,7 @@ unsigned char *sha_encoding(const unsigned char *buffer){
 }
 
 //zlib-compression function
-struct compressed_struct *zlib_compression(const unsigned char *buffer){
+struct compressed_struct *zlib_compression(const char *buffer){
 	
 	struct blob_details *det = get_file_det(buffer);
 	unsigned long buffer_size = det->header_len + det->file_size;
@@ -146,13 +146,12 @@ void write_compressed(struct compressed_struct *cpress, char *hash_val){
 	uLongf size = cpress->size;
 	
 	char directory_path[DIR_PATH_SIZE_CONST + 3 + 1];
-	snprintf(directory_path, DIR_PATH_SIZE_CONST+1, "%s", "./.spoon/objects/");
+	snprintf(directory_path, DIR_PATH_SIZE_CONST+1, "%s", DIR_PATH);
 	directory_path[DIR_PATH_SIZE_CONST] = hash_val[0];
 	directory_path[DIR_PATH_SIZE_CONST+1] = hash_val[1];
 	directory_path[DIR_PATH_SIZE_CONST+2] = '/';
 	directory_path[DIR_PATH_SIZE_CONST+3] = '\0';
 	
-	//printf("\ndirpath: %s", directory_path);
 	int dir_created = mkdir(directory_path, 0777);
 	if(dir_created != 0){
 		if(errno != EEXIST){
@@ -169,7 +168,6 @@ void write_compressed(struct compressed_struct *cpress, char *hash_val){
 		file_path[DIR_PATH_SIZE_CONST + 3 + i] = hash_val[2 + i];
 	}
 	file_path[DIR_PATH_SIZE_CONST + 1 + 40] = '\0';
-	//printf("\nfilepath: %s\n", file_path);
 	
 	FILE *fptr;
 	if((fptr = fopen(file_path, "wb")) == NULL){

@@ -1,9 +1,62 @@
 #include "../include/cat_file.h"
+#include "../include/write_tree.h"
 
+//this function allows for slicing of strings between pos1 and pos2 of str
+//(pos2 char is not included)
+unsigned char *slice(unsigned char *str, size_t pos1, size_t pos2){	
+	
+	if(pos2 <= pos1){
+    fprintf(stderr, "invalid slice\n");
+    exit(EXIT_FAILURE);
+	}
+	
+	unsigned char *s = (unsigned char *)malloc((pos2- pos1 + 1) * sizeof(unsigned char));
+	for(size_t i = 0; i < pos2-pos1; i++){
+		s[i] = str[pos1 + i];
+	}
+	
+	s[pos2 - pos1] = '\0';
+	return s;
+}
+
+/*
+parse_tree_entry will parse a tree entry from a tree file
+tree-entry in tree-object file: mode filename\0(20-bit-hash-val)
+parsed output: <mode-code> mode hash-val filename
+*/
+
+unsigned char *parse_tree_entry(unsigned char *str, size_t entry_point, size_t end_idx){
+	
+	unsigned char *parsed_entry = (unsigned char *)malloc((2*ENTRY_SIZE + 1) * sizeof(unsigned char));
+	unsigned char *mode = slice(str, entry_point, entry_point + 6);
+	unsigned char *filename = slice(str, entry_point + 7, end_idx - 20);
+	unsigned char *sha_val = slice(str, end_idx - 20, end_idx);
+	char *hash_val = byte_to_hex(sha_val);
+	
+	if(0 == strcmp(mode, "100644")){
+		snprintf(parsed_entry, 2*ENTRY_SIZE + 1, "100664 blob %s %s", hash_val, filename);
+	}
+	else if (0 == strcmp(mode, "040000")){
+		snprintf(parsed_entry, 2*ENTRY_SIZE + 1, "040000 tree %s %s", hash_val, filename);
+	}
+	else{ //for now return error
+		fprintf(stderr, "%s is a invalid-file-format\n", mode);
+		exit(EXIT_FAILURE);
+	}
+	
+	free(mode);
+	free(filename);
+	free(sha_val);
+	free(hash_val);
+	
+	return parsed_entry;
+}
+
+//cat-file allows for the view of a particular file in a human-readable format
 void cat_file(char *hash_val){
 	size_t path_len = DIR_PATH_SIZE_CONST + 2 + 1 + 38 + 1;
 	char path[path_len];
-	snprintf(path, DIR_PATH_SIZE_CONST + 1, "%s", "./.spoon/objects/");
+	snprintf(path, DIR_PATH_SIZE_CONST + 1, "%s", DIR_PATH);
 	path[DIR_PATH_SIZE_CONST] = hash_val[0];
 	path[DIR_PATH_SIZE_CONST + 1] = hash_val[1];
 	path[DIR_PATH_SIZE_CONST + 2] = '/';
@@ -49,14 +102,30 @@ void cat_file(char *hash_val){
 		index_of_null++;
 	}
 	
-	for(size_t i=0;i<actual_size;i++){
-		printf("%c", decompressed[index_of_null + 1 + i]);
+	unsigned char *s = slice(decompressed, 0, 4);
+	if(0 == strcmp(s, "blob")){
+		for(size_t i = 0;i < actual_size; i++){
+			fprintf(stdout, "%c", decompressed[index_of_null + 1 + i]);
+		}
+	}
+	else if(0 == strcmp(s, "tree")){
+		size_t entry_len = 0;
+		size_t entry_point = index_of_null + 1;
+		size_t end_idx = entry_point + 1;
+		
+		for(size_t i = index_of_null + 1; i < actual_size + index_of_null + 1; i++){
+			if('\0' == decompressed[i]){
+				end_idx = i + 20 + 1;
+				unsigned char *parsed_entry = parse_tree_entry(decompressed, entry_point, end_idx);
+				fprintf(stdout, "%s\n", parsed_entry);
+				entry_point = end_idx;
+				free(parsed_entry);
+				i+=20;
+			}
+		}
 	}
 	
+	free(s);
 	free(buffer);
 	free(decompressed);
 }
-
-
-
-

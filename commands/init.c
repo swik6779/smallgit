@@ -1,15 +1,15 @@
 #include "../include/init.h"
 
 void init_repository(){
-	char *spoon_repo = "./.spoon"; int spoon_repo_check;
-	char *objects_folder = "./.spoon/objects"; int objects_check;
-	char *refs_folder = "./.spoon/refs"; int refs_check;
-	char *heads_folder = "./.spoon/refs/heads"; int heads_check;
+	char *repo = REPO_PATH; int repo_check;
+	char *objects_folder = OBJECTS_PATH; int objects_check;
+	char *refs_folder = REFS_PATH; int refs_check;
+	char *heads_folder = REFS_HEADS_PATH; int heads_check;
 	
-	char *HEAD_FILE = "./.spoon/HEAD";
+	char *HEAD_FILE = HEADS_FILE_PATH;
 	
-	spoon_repo_check = mkdir(spoon_repo, 0777);
-	if(spoon_repo_check == -1){
+	repo_check = mkdir(repo, 0777);
+	if(repo_check == -1){
 		if(errno == EEXIST){
 			fprintf(stderr, "repo already initialized\n");
 			exit(EXIT_FAILURE);
@@ -23,21 +23,21 @@ void init_repository(){
 	objects_check = mkdir(objects_folder, 0777);
 	if(objects_check == -1){
 		fprintf(stderr, "error in initializing repo (object)\n");
-		rmdir(spoon_repo);
+		rmdir(repo);
 		exit(EXIT_FAILURE);
 	}
 	
 	refs_check = mkdir(refs_folder, 0777);
 	if(refs_check == -1){
 		fprintf(stderr, "error in initializing repo (refs)\n");
-		rmdir(spoon_repo);
+		rmdir(repo);
 		exit(EXIT_FAILURE);
 	}
 	
 	heads_check = mkdir(heads_folder, 0777);
 	if(heads_check == -1){
 		fprintf(stderr, "error in initializing (heads)\n");
-		rmdir(spoon_repo);
+		rmdir(repo);
 		exit(EXIT_FAILURE);
 	}
 	
@@ -46,19 +46,21 @@ void init_repository(){
 	fptr = fopen(HEAD_FILE, "w");
 	if(fptr == NULL){
 		fprintf(stderr, "error in initializing repo (HEAD)\n");
-		rmdir(spoon_repo);
+		rmdir(repo);
 		exit(EXIT_FAILURE);
 	}
 	
 	if(fprintf(fptr, "ref: refs/heads/main\n") < 0){
 		fprintf(stderr, "error in initializing repo (HEAD)\n");
-		rmdir(spoon_repo);
+		rmdir(repo);
 		exit(EXIT_FAILURE);
 	}
 	
 	if(fclose(fptr) != 0){
 		fprintf(stderr, "error in initializing repo (HEAD)\n");
-		rmdir(spoon_repo);
+		rmdir(repo);
 		exit(EXIT_FAILURE);
 	}
+	
+	fprintf(stdout, "empty repo initialized\n");
 }
