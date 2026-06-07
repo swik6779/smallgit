@@ -1,4 +1,5 @@
 #include "../include/utils.h"
+#include "../include/init.h"
 
 char dec_to_hex(uint8_t val){
 	switch(val){
@@ -63,4 +64,29 @@ char *byte_to_hex(unsigned char *sha_val){
 	hash_val[40] = '\0';
 	
 	return hash_val;
+}
+
+char *get_config_file(){
+	FILE *fptr = fopen(CONFIG_FILE_PATH, "r");
+	struct stat st;
+	
+	if(stat(CONFIG_FILE_PATH, &st)){
+		fprintf(stderr, "config file couldn't be opened\n");
+		exit(EXIT_FAILURE);
+	}
+	
+	char *contents = (char *)malloc(st.st_size + 1 * sizeof(char));
+	if(fread(contents, sizeof(char), st.st_size, fptr) == 0){
+		fprintf(stderr, "config file couldn't be parsed\n");
+		exit(EXIT_FAILURE);
+	}
+	contents[st.st_size] = '\0';
+	
+	if(fclose(fptr) != 0){
+		fprintf(stderr, "config file couldn't be parsed\n");
+		exit(EXIT_FAILURE);
+	}
+	
+	fprintf(stdout, "%s", contents);
+	return contents;
 }

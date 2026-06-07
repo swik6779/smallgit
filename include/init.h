@@ -12,6 +12,7 @@
 #define REFS_PATH "./.rec/refs"
 #define REFS_HEADS_PATH "./.rec/refs/heads"
 #define HEADS_FILE_PATH "./.rec/HEAD"
+#define CONFIG_FILE_PATH "./.rec/config"
 
 void init_repository();
 

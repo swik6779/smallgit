@@ -64,4 +64,15 @@ int main(int argc, char **argv){
 		
 		free(hash_val);
 	}
+	else if(0 == strcmp(argv[1], "commit-tree")){
+		if(argc != 4){
+			fprintf(stderr, "incorrect-usage of commit-tree\n");
+			exit(EXIT_FAILURE);
+		}
+		
+		char *hash_val = argv[2];
+		char *message = argv[3];
+		
+		commit_tree(hash_val, message);
+	}
 }

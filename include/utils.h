@@ -8,5 +8,6 @@
 char dec_to_hex(uint8_t val);
 char *hexadecimal_equivalent(unsigned char ch, char hex[]);
 char *byte_to_hex(unsigned char *sha_val);
+char *get_config_file();
 
 #endif

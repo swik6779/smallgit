@@ -62,5 +62,24 @@ void init_repository(){
 		exit(EXIT_FAILURE);
 	}
 	
+	FILE *fptr2 = fopen(CONFIG_FILE_PATH, "w");
+	if(fptr2 == NULL){
+		fprintf(stderr, "error in initializing repo (config)\n");
+		rmdir(repo);
+		exit(EXIT_FAILURE);
+	}
+	
+	if(fprintf(fptr2, "name = dummy1\nemail = dummy1@mail.com\n") < 0){
+		fprintf(stderr, "error in initializing repo (HEAD)\n");
+		rmdir(repo);
+		exit(EXIT_FAILURE);
+	}
+	
+	if(fclose(fptr2) != 0){
+		fprintf(stderr, "error in initializing repo (HEAD)\n");
+		rmdir(repo);
+		exit(EXIT_FAILURE);
+	}
+	
 	fprintf(stdout, "empty repo initialized\n");
 }
