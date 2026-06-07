@@ -87,6 +87,5 @@ char *get_config_file(){
 		exit(EXIT_FAILURE);
 	}
 	
-	fprintf(stdout, "%s", contents);
 	return contents;
 }

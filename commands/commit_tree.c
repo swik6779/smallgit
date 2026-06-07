@@ -33,7 +33,7 @@ void commit_tree(char *tree_hash, char *message){
 	if(0 == access(MAIN_PATH, F_OK)){ 
 		//in this case, this commit is not the first one, thus, parent field is non-empty
 		//parent <hash-val>\n
-		content_len += (6 + 1 + 20 + 1);
+		content_len += (6 + 1 + 40 + 1);
 		
 		if((fptr = fopen(MAIN_PATH, "r")) == NULL){
 			fprintf(stderr, "cannot open file %s\n", MAIN_PATH);
@@ -41,7 +41,7 @@ void commit_tree(char *tree_hash, char *message){
 		}
 		
 		fseek(fptr, -41, SEEK_END);
-		ssize_t len = read(fptr, last_hash_val, 41);
+		fread(last_hash_val, sizeof(char), 40, fptr);
 		
 		if(fclose(fptr)){
 			fprintf(stderr, "cannot close file\n");
@@ -74,11 +74,9 @@ void commit_tree(char *tree_hash, char *message){
 		}
 		else{
 			email[i - email_start] = config_contents[i];
-			fprintf(stdout, "%c", email[i - email_start]);
 		}
 		i++;
 	}
-	fprintf(stdout, "name: %s, email: %s\n", name, email);
 	
 	time_t commit_time;
 	commit_time = time(NULL);
@@ -102,13 +100,13 @@ void commit_tree(char *tree_hash, char *message){
 	size_t header_len = 6 + 1 + strlen(size_in_str) + 1;
 	char *header = (char *)malloc(header_len * sizeof(char));
 	snprintf(header, header_len, "commit %s", size_in_str);
-	char *commit_content = (char *)malloc((content_len + 1) * sizeof(char));
+	char *commit_content = (char *)malloc((content_len + 1 + 1) * sizeof(char));
 	
 	if(last_hash_val[0] != '\0'){
-		snprintf(commit_content, content_len + 1, "tree %s\nparent %s\nauthor %s <%s> %lu +0000\ncommitter %s <%s> %lu +0000\n\n%s", tree_hash, last_hash_val, name, email, commit_time, name, email, commit_time, message);
+		snprintf(commit_content, content_len + 1, "tree %s\nparent %s\nauthor %s <%s> %lu +0000\ncommitter %s <%s> %lu +0000\n\n%s\n", tree_hash, last_hash_val, name, email, commit_time, name, email, commit_time, message);
 	}
 	else{
-		snprintf(commit_content, content_len + 1, "tree %s\nauthor %s <%s> %lu +0000\ncommitter %s <%s> %lu +0000\n\n%s", tree_hash, name, email, commit_time, name, email, commit_time, message);
+		snprintf(commit_content, content_len + 1, "tree %s\nauthor %s <%s> %lu +0000\ncommitter %s <%s> %lu +0000\n\n%s\n", tree_hash, name, email, commit_time, name, email, commit_time, message);
 	}
 	
 	char *commit_object = (char *)malloc((content_len + header_len) * sizeof(char));
