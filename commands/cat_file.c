@@ -48,13 +48,14 @@ void cat_file(char *hash_val){
 	
 	unsigned char *s = slice(decompressed, 0, 4);
 	
+	//there are three types of files: blob, tree, commit
+	//only for commit files, we have to start looking for the null-char from idx = 7
 	size_t index_of_null = (strcmp(s, "comm") != 0)? 5:7;
 	size_t actual_size = 0;
 	while(decompressed[index_of_null] != '\0'){
 		actual_size = actual_size*10 + (decompressed[index_of_null] - '0');
 		index_of_null++;
 	}
-	
 	
 	if(0 == strcmp(s, "blob") || 0 == strcmp(s, "comm")){
 		for(size_t i = 0;i < actual_size; i++){

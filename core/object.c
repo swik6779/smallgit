@@ -34,8 +34,8 @@ unsigned char *getcontnts(const char *filepath){
 		}
 	}
 	
-	size_t header_len = 5 + bits_for_digits + 1;
-	size_t buffer_len = file_size + header_len + 1;
+	size_t header_len = 5 + bits_for_digits + 1; //header is (blob <filesize>\0)
+	size_t buffer_len = file_size + header_len + 1; 
 	
 	unsigned char *buffer = (unsigned char *)malloc(buffer_len * sizeof(unsigned char));
 	
@@ -74,6 +74,10 @@ unsigned char *getcontnts(const char *filepath){
 	of the file whose contents are in the const char *buffer.
 	
 	These pieces of info are used for sha_encoding and the zlib_compression functions
+	objects can be of 3 types:
+	-blob (header: blob <filesize>\0)
+	-tree (header: tree <filesize>\0)
+	-commit (header: commit <filesize>\0)
 */
 
 struct blob_details *get_file_det(const char *buffer){
@@ -86,13 +90,14 @@ struct blob_details *get_file_det(const char *buffer){
 	
 	for(size_t i=0; buffer[i] != ' '; i++){
 		if(buffer[i+1] == ' '){
-			idx_before_space = i;
+			//for blob and tree objects, this will be 3. for commit objects it is 5
+			idx_before_space = i; 
 		}
 	}
 	
 	for(size_t i=0; buffer[i] != '\0'; i++){
 		if(buffer[i+1] == '\0'){
-			idx_before_null = i;
+			idx_before_null = i; //we use this index value to convert the size from a str to size_t
 		}
 	}
 	
@@ -101,7 +106,7 @@ struct blob_details *get_file_det(const char *buffer){
 		file_size = file_size*10 + digit;
 	}
 	
-	uint8_t header_len = idx_before_space + 1 + (idx_before_null - idx_before_space) + 1;
+	uint8_t header_len = idx_before_null + 2;
 	
 	det->header_len = header_len;
 	det->file_size = file_size;
@@ -109,7 +114,10 @@ struct blob_details *get_file_det(const char *buffer){
 	return det;
 }
 
-//sha1-hash value
+/*
+	This function takes the contents of a object, then returns a 20 byte value that can be used to
+	uniquely identify a file.
+*/
 unsigned char *sha_encoding(const unsigned char *buffer){
 	
 	struct blob_details *det = get_file_det(buffer);
@@ -123,7 +131,10 @@ unsigned char *sha_encoding(const unsigned char *buffer){
 	return sha_val;
 }
 
-//zlib-compression function
+/*
+	This function takes the contents of an object and then compresses its contents, and returns
+	the compressed content.
+*/
 struct compressed_struct *zlib_compression(const char *buffer){
 	
 	struct blob_details *det = get_file_det(buffer);
@@ -149,16 +160,17 @@ struct compressed_struct *zlib_compression(const char *buffer){
 	return cpress;
 }
 
+/*
+	Takes the compressed contents, with the 40-char hash value,
+	then creates a file at the location .rec/objects/<first-two-chars-of-hash-value>/
+	dumping the contents into it.
+*/
 void write_compressed(struct compressed_struct *cpress, char *hash_val){
 	unsigned char *compressed_content = cpress->compressed_content;
 	uLongf size = cpress->size;
 	
 	char directory_path[DIR_PATH_SIZE_CONST + 3 + 1];
-	snprintf(directory_path, DIR_PATH_SIZE_CONST+1, "%s", DIR_PATH);
-	directory_path[DIR_PATH_SIZE_CONST] = hash_val[0];
-	directory_path[DIR_PATH_SIZE_CONST+1] = hash_val[1];
-	directory_path[DIR_PATH_SIZE_CONST+2] = '/';
-	directory_path[DIR_PATH_SIZE_CONST+3] = '\0';
+	snprintf(directory_path, DIR_PATH_SIZE_CONST+4, "%s%c%c/", DIR_PATH, hash_val[0], hash_val[1]);
 	
 	int dir_created = mkdir(directory_path, 0777);
 	if(dir_created != 0){
@@ -168,6 +180,7 @@ void write_compressed(struct compressed_struct *cpress, char *hash_val){
 		}
 	}
 	
+	//filepath is	.rec/objects/<first-2-chars-of-hash-value>/<rest-38-chars-of-hash-value>
 	char file_path[DIR_PATH_SIZE_CONST + 3 + 38 + 1];
 	strncpy(file_path, directory_path, DIR_PATH_SIZE_CONST+3);
 	

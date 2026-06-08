@@ -1,6 +1,11 @@
 #include "../include/utils.h"
 #include "../include/write_tree.h"
 
+/*
+	function converts the 20-byte unsigned character string into
+	a 40-byte hexadecimal character string, which is used for storing, retrieval, etc...
+*/
+
 char *byte_to_hex(unsigned char *sha_val){
 
 	char *hash_val = (char *)malloc(41 * sizeof(char));
@@ -11,8 +16,10 @@ char *byte_to_hex(unsigned char *sha_val){
 	return hash_val;
 }
 
-//this function allows for slicing of strings between pos1 and pos2 of str
-//(pos2 char is not included)
+/*
+	this function allows for slicing of strings between pos1 and pos2 of str
+	(pos2 char is not included)
+*/
 unsigned char *slice(unsigned char *str, size_t pos1, size_t pos2){	
 	
 	if(pos2 <= pos1){
@@ -62,6 +69,7 @@ unsigned char *parse_tree_entry(unsigned char *str, size_t entry_point, size_t e
 	return parsed_entry;
 }
 
+//gets the contents of the config file
 char *get_config_file(){
 	FILE *fptr = fopen(CONFIG_FILE_PATH, "r");
 	struct stat st;

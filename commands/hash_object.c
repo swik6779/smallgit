@@ -1,5 +1,10 @@
 #include "../include/hash_object.h"
 
+/*
+flow of hash-object: 
+get contents of a file into a buffer -> get its SHA hash value -> convert into hexadecimal value -> compress the contents of the file into a blob object -> write compressed contents to a file
+*/
+
 char *hash_object(const char *filepath){
 	unsigned char *buffer = getcontnts(filepath);
 	unsigned char *sha_val = sha_encoding(buffer);
@@ -11,7 +16,7 @@ char *hash_object(const char *filepath){
 	
 	free(buffer);
 	free(cpress);
-	fprintf(stdout, "stored: %s\n", hash_val);
+	fprintf(stdout, "blob-object stored: %s\n", hash_val);
 	free(hash_val);
 	
 	return sha_val;

@@ -2,6 +2,11 @@
 #include "../include/hash_object.h"
 #include "../include/object.h"
 
+/*
+called on directories to create tree objects. when it is called, hash-object is called on all the files in it.
+it is recursive in nature as tree objects are made of the inner directories as well.
+*/
+
 char *write_tree(const char *path){
 	struct dirent *de;
 	
@@ -14,7 +19,7 @@ char *write_tree(const char *path){
 	
 	size_t entry_len = 0;
 	
-	//this while loop basically counts the number of entries
+	//this while loop calculates the length for each entry in the tree object file
 	while((de = readdir(dr)) != NULL){
 		if(0 == strcmp(de->d_name, ".rec") || 0 == strcmp(de->d_name, ".") || 0 == strcmp(de->d_name, "..")){
 			continue;
@@ -55,7 +60,7 @@ char *write_tree(const char *path){
 	
 	while((de = readdir(dr)) != NULL){
 	
-		// to avoid recursion 
+		// to avoid recursion on .rec, . , and .. directories
 		if(0 == strcmp(de->d_name, ".rec") || 0 == strcmp(de->d_name, ".") || 0 == strcmp(de->d_name, "..")){
 			continue;
 		}
@@ -112,7 +117,7 @@ char *write_tree(const char *path){
 	unsigned char *sha_val = sha_encoding(buffer);
 	char *hash_val = byte_to_hex(sha_val);
 	write_compressed(cpress, hash_val);
-	fprintf(stdout, "tree stored: %s\n", hash_val);
+	fprintf(stdout, "tree-object stored: %s\n", hash_val);
 	
 	free(hash_val);
 	free(cpress);

@@ -81,15 +81,19 @@ void commit_tree(char *tree_hash, char *message){
 	time_t commit_time;
 	commit_time = time(NULL);
 	
-	//content_len has to be increased by the below amount for displaying author details
-	//format of author details: author <name> <email> <timestamp> +0000\n
-	//(+0000) refers to the timezone offset, it is being hardcoded for this implementation 
-	//but this may change for future versions
+	/*
+	content_len has to be increased by the below amount for displaying author details
+	format of author details: author <name> <email> <timestamp> +0000\n
+	(+0000) refers to the timezone offset, it is being hardcoded for this implementation 
+	but this may change for future versions
+	*/
 	content_len += (6 + 1 + strlen(name) + 1 + 1 + strlen(email) + 1 + 1 + 10 + 1 + 5 + 1);
 	
-	//content_len has to be increased by the below amount for displaying committer details
-	//format of author details: committer <name> <email> <timestamp> +0000\n
-	//for now both author and committer will be the same, may change for future versions
+	/*
+	content_len has to be increased by the below amount for displaying committer details
+	format of author details: committer <name> <email> <timestamp> +0000\n
+	for now both author and committer will be the same, may change for future versions
+	*/
 	content_len += (9 + 1 + strlen(name) + 1 + 1 + strlen(email) + 1 + 1 + 10 + 1 + 5 + 1);
 	
 	content_len += (1 + strlen(message));
@@ -102,6 +106,7 @@ void commit_tree(char *tree_hash, char *message){
 	snprintf(header, header_len, "commit %s", size_in_str);
 	char *commit_content = (char *)malloc((content_len + 1 + 1) * sizeof(char));
 	
+	//the if-else statement accounts for the case where the first commit is being made
 	if(last_hash_val[0] != '\0'){
 		snprintf(commit_content, content_len + 1, "tree %s\nparent %s\nauthor %s <%s> %lu +0000\ncommitter %s <%s> %lu +0000\n\n%s\n", tree_hash, last_hash_val, name, email, commit_time, name, email, commit_time, message);
 	}
@@ -118,6 +123,8 @@ void commit_tree(char *tree_hash, char *message){
 	struct compressed_struct *cpress = zlib_compression(commit_object);
 	write_compressed(cpress, hash_val);
 	
+	//once the contents of the file are written,
+	//the hash-value of the commit object is stored in refs/heads/main
 	if((fptr = fopen(MAIN_PATH, "w")) == NULL){
 		fprintf(stderr, "cannot open file %s\n", MAIN_PATH);
 		exit(EXIT_FAILURE);
@@ -127,7 +134,7 @@ void commit_tree(char *tree_hash, char *message){
 	snprintf(hash_val_newline, 42, "%s\n", hash_val);
 	
 	fwrite(hash_val, sizeof(char), 41, fptr);
-	fprintf(stdout, "commit-object: %s stored\n", hash_val);
+	fprintf(stdout, "commit-object stored: %s\n", hash_val);
 	if(fclose(fptr)){
 		fprintf(stderr, "cannot close file\n");
 		exit(EXIT_FAILURE);
