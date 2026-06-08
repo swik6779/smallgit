@@ -113,25 +113,9 @@ void commit_tree(char *tree_hash, char *message){
 	memcpy(commit_object, header, header_len);
 	memcpy(commit_object + header_len, commit_content, content_len + 1);
 	
-	unsigned char *sha_val = (unsigned char *)malloc(21 * sizeof(char));
-	SHA1(commit_object, header_len + content_len, sha_val);
-	
+	unsigned char *sha_val = sha_encoding(commit_object);
 	char *hash_val = byte_to_hex(sha_val);
-	
-	uLongf compressed_size = compressBound(header_len + content_len);
-	
-	unsigned char *compressed = (unsigned char *)malloc(compressed_size);
-	
-	if(compress2(compressed, &compressed_size, commit_object, header_len + content_len, Z_BEST_COMPRESSION) != Z_OK){
-		fprintf(stderr, "compression failed\n");
-		exit(EXIT_FAILURE);
-	}
-	
-	struct compressed_struct *cpress = (struct compressed_struct *)malloc
-																				(sizeof(struct compressed_struct));
-	
-	cpress->compressed_content = compressed;
-	cpress->size = compressed_size;
+	struct compressed_struct *cpress = zlib_compression(commit_object);
 	write_compressed(cpress, hash_val);
 	
 	if((fptr = fopen(MAIN_PATH, "w")) == NULL){
@@ -151,6 +135,7 @@ void commit_tree(char *tree_hash, char *message){
 	
 	free(header);
 	free(commit_content);
+	free(commit_object);
 	free(sha_val);
 	free(hash_val);
 	free(cpress);

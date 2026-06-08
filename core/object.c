@@ -81,19 +81,27 @@ struct blob_details *get_file_det(const char *buffer){
 	struct blob_details *det = (struct blob_details *)malloc(sizeof(struct blob_details));
 	
 	unsigned long file_size = 0;
+	size_t idx_before_space;
 	size_t idx_before_null;
-	for(size_t i=5; buffer[i] != '\0'; i++){
+	
+	for(size_t i=0; buffer[i] != ' '; i++){
+		if(buffer[i+1] == ' '){
+			idx_before_space = i;
+		}
+	}
+	
+	for(size_t i=0; buffer[i] != '\0'; i++){
 		if(buffer[i+1] == '\0'){
 			idx_before_null = i;
 		}
 	}
 	
-	for(size_t i=5; i<=idx_before_null; i++){
+	for(size_t i=idx_before_space+2; i<=idx_before_null; i++){
 		uint8_t digit = (uint8_t)(buffer[i] - '0');
 		file_size = file_size*10 + digit;
 	}
 	
-	uint8_t header_len = 5 + (idx_before_null - 5 + 1) + 1;
+	uint8_t header_len = idx_before_space + 1 + (idx_before_null - idx_before_space) + 1;
 	
 	det->header_len = header_len;
 	det->file_size = file_size;

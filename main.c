@@ -2,6 +2,7 @@
 #include "./include/hash_object.h"
 #include "./include/cat_file.h"
 #include "./include/write_tree.h"
+#include "./include/commit_tree.h"
 
 int main(int argc, char **argv){
 	if(0 == strcmp(argv[1], "init")){
