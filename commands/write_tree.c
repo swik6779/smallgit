@@ -21,7 +21,7 @@ char *write_tree(const char *path){
 	
 	//this while loop calculates the length for each entry in the tree object file
 	while((de = readdir(dr)) != NULL){
-		if(0 == strcmp(de->d_name, ".rec") || 0 == strcmp(de->d_name, ".") || 0 == strcmp(de->d_name, "..")){
+		if(0 == strcmp(de->d_name, ".git") || 0 == strcmp(de->d_name, ".") || 0 == strcmp(de->d_name, "..")){
 			continue;
 		}
 		
@@ -60,8 +60,8 @@ char *write_tree(const char *path){
 	
 	while((de = readdir(dr)) != NULL){
 	
-		// to avoid recursion on .rec, . , and .. directories
-		if(0 == strcmp(de->d_name, ".rec") || 0 == strcmp(de->d_name, ".") || 0 == strcmp(de->d_name, "..")){
+		// to avoid recursion on .git, . , and .. directories
+		if(0 == strcmp(de->d_name, ".git") || 0 == strcmp(de->d_name, ".") || 0 == strcmp(de->d_name, "..")){
 			continue;
 		}
 		

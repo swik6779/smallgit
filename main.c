@@ -4,6 +4,7 @@
 #include "./include/write_tree.h"
 #include "./include/commit_tree.h"
 #include "./include/add.h"
+#include "./include/add_all.h"
 
 int main(int argc, char **argv){
 	if(0 == strcmp(argv[1], "init")){
@@ -83,7 +84,16 @@ int main(int argc, char **argv){
 			exit(EXIT_FAILURE);
 		}
 		
-		add(argv[2]);
+		if(0 == strcmp(argv[2], "all")){
+			add_all("./");
+		}
+		else{
+			add(argv[2]);
+		}
+	}
+	else{
+		fprintf(stderr, "no-such-command\n");
+		exit(EXIT_FAILURE);
 	}
 }
 

@@ -9,13 +9,14 @@ SRCS = main.c \
        commands/write_tree.c \
        commands/commit_tree.c \
        commands/add.c \
+       commands/add_all.c \
        core/object.c \
        core/utils.c 
 
-rec: $(SRCS)
-	$(CC) $(CFLAGS) -o rec $(SRCS) $(LIBS)
+sgit: $(SRCS)
+	$(CC) $(CFLAGS) -o sgit $(SRCS) $(LIBS)
 
 clean:
-	rm -f rec
+	rm -f sgit
 
 .PHONY: clean
