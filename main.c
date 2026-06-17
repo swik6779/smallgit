@@ -3,6 +3,7 @@
 #include "./include/cat_file.h"
 #include "./include/write_tree.h"
 #include "./include/commit_tree.h"
+#include "./include/add.h"
 
 int main(int argc, char **argv){
 	if(0 == strcmp(argv[1], "init")){
@@ -76,4 +77,16 @@ int main(int argc, char **argv){
 		
 		commit_tree(hash_val, message);
 	}
+	else if(0 == strcmp(argv[1], "add")){
+		if(argc != 3){
+			fprintf(stderr, "incorrect-usage of add\n");
+			exit(EXIT_FAILURE);
+		}
+		
+		add(argv[2]);
+	}
 }
+
+
+
+

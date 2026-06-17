@@ -7,12 +7,12 @@
 #include <sys/stat.h>
 #include <errno.h>
 
-#define REPO_PATH "./.rec"
-#define OBJECTS_PATH "./.rec/objects"
-#define REFS_PATH "./.rec/refs"
-#define REFS_HEADS_PATH "./.rec/refs/heads"
-#define HEADS_FILE_PATH "./.rec/HEAD"
-#define CONFIG_FILE_PATH "./.rec/config"
+#define REPO_PATH "./.git"
+#define OBJECTS_PATH "./.git/objects"
+#define REFS_PATH "./.git/refs"
+#define REFS_HEADS_PATH "./.git/refs/heads"
+#define HEADS_FILE_PATH "./.git/HEAD"
+#define CONFIG_FILE_PATH "./.git/config"
 
 void init_repository();
 

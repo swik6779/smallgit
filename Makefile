@@ -8,6 +8,7 @@ SRCS = main.c \
        commands/cat_file.c \
        commands/write_tree.c \
        commands/commit_tree.c \
+       commands/add.c \
        core/object.c \
        core/utils.c 
 

@@ -14,7 +14,7 @@
 #include <zlib.h>
 
 #define SIZE_BITS 20
-#define DIR_PATH "./.rec/objects/"
+#define DIR_PATH "./.git/objects/"
 #define DIR_PATH_SIZE_CONST (sizeof(DIR_PATH) - 1)
 
 struct blob_details{

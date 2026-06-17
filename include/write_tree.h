@@ -4,7 +4,7 @@
 #include <dirent.h>
 #include <sys/stat.h>
 
-#define ENTRY_SIZE 256
+#define ENTRY_SIZE 1024
 
 char *write_tree(const char *path);
 
