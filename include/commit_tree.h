@@ -8,7 +8,7 @@
 #include <time.h>
 #include <unistd.h>
 
-#define MAIN_PATH "./.git/refs/heads/main"
+#define MAIN_PATH "./.rec/refs/heads/main"
 #define NAME_LEN 128
 #define EMAIL_LEN 256
 

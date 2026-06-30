@@ -23,28 +23,17 @@ unsigned char *getcontnts(const char *filepath){
 	unsigned char size_in_str[SIZE_BITS];
 	snprintf(size_in_str, SIZE_BITS, "%zu", file_size);
 	
-	int bits_for_digits = 0;
-	
-	for(int i=0;i<SIZE_BITS;i++){
-		if(size_in_str[i] < '0' || size_in_str[i] > '9'){
-			break;
-		}
-		else{
-			bits_for_digits++;
-		}
-	}
-	
-	size_t header_len = 5 + bits_for_digits + 1; //header is (blob <filesize>\0)
+	size_t header_len = 5 + strlen(size_in_str) + 1; //header is (blob <filesize>\0)
 	size_t buffer_len = file_size + header_len + 1; 
 	
 	unsigned char *buffer = (unsigned char *)malloc(buffer_len * sizeof(unsigned char));
 	
 	buffer[0] = 'b'; buffer[1] = 'l'; buffer[2] = 'o'; buffer[3] = 'b'; buffer[4] = ' ';
 	
-	for(int i=0;i<bits_for_digits;i++){
+	for(int i=0;i<strlen(size_in_str);i++){
 		buffer[5 + i] = size_in_str[i];
 	}
-	buffer[5 + bits_for_digits] = '\0';
+	buffer[5 + strlen(size_in_str)] = '\0';
 	
 	FILE *fptr;
 	fptr = fopen(filepath, "rb");
@@ -54,7 +43,7 @@ unsigned char *getcontnts(const char *filepath){
 	}
 	
 	int ch;
-	size_t iter = 5 + bits_for_digits + 1;
+	size_t iter = 5 + strlen(size_in_str) + 1;
 	
 	while((ch = fgetc(fptr)) != EOF){
 		buffer[iter++] = (unsigned char)ch;

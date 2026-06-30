@@ -5,6 +5,7 @@
 #include "./include/commit_tree.h"
 #include "./include/add.h"
 #include "./include/add_all.h"
+#include "./include/commit.h"
 
 int main(int argc, char **argv){
 	if(0 == strcmp(argv[1], "init")){
@@ -90,6 +91,14 @@ int main(int argc, char **argv){
 		else{
 			add(argv[2]);
 		}
+	}
+	else if(0 == strcmp(argv[1], "commit")){
+		if(argc != 3){
+			fprintf(stderr, "incorrect-usage of add\n");
+			exit(EXIT_FAILURE);
+		}
+		
+		commit(argv[2]);
 	}
 	else{
 		fprintf(stderr, "no-such-command\n");

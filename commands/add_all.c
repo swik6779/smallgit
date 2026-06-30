@@ -11,7 +11,7 @@ void add_all(const char *dirpath){
 	struct dirent *de;
 	while((de = readdir(dir)) != NULL){
 		
-		if(0 == strcmp(de->d_name, ".") || 0 == strcmp(de->d_name, "..") || 0 == strcmp(de->d_name, ".git")){
+		if(0 == strcmp(de->d_name, ".") || 0 == strcmp(de->d_name, "..") || 0 == strcmp(de->d_name, ".rec")){
 			continue;
 		}
 		

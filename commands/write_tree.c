@@ -21,7 +21,7 @@ char *write_tree(const char *path){
 	
 	//this while loop calculates the length for each entry in the tree object file
 	while((de = readdir(dr)) != NULL){
-		if(0 == strcmp(de->d_name, ".git") || 0 == strcmp(de->d_name, ".") || 0 == strcmp(de->d_name, "..")){
+		if(0 == strcmp(de->d_name, ".rec") || 0 == strcmp(de->d_name, ".") || 0 == strcmp(de->d_name, "..")){
 			continue;
 		}
 		
@@ -31,37 +31,27 @@ char *write_tree(const char *path){
 	
 	char size_in_str[SIZE_BITS];
 	snprintf(size_in_str, SIZE_BITS, "%zu", entry_len);
-	
-	int bits_for_digits = 0;
-	for(int i=0; i<SIZE_BITS; i++){
-		if(size_in_str[i] >= '0' && size_in_str[i] <= '9'){
-			bits_for_digits++;
-		}
-		else{
-			break;
-		}
-	}
 		
 	// 5 - "tree ", bits-for-digits, 1 for null, entries, 1 for null
-	unsigned char *buffer = (unsigned char *)malloc((5 + bits_for_digits + 1 + entry_len) *
+	unsigned char *buffer = (unsigned char *)malloc((5 + strlen(size_in_str) + 1 + entry_len) *
 																																					 sizeof(unsigned char));
 	
 	//tree header
 	buffer[0]	= 't'; buffer[1] = 'r'; buffer[2] = 'e'; buffer[3] = 'e'; buffer[4]	= ' ';
 	
-	for(int i=0; i<bits_for_digits; i++){
+	for(int i=0; i<strlen(size_in_str); i++){
 		buffer[5 + i] = size_in_str[i];
 	}
-	buffer[5 + bits_for_digits] = '\0';
+	buffer[5 + strlen(size_in_str)] = '\0';
 	
-	size_t iter = 5 + bits_for_digits + 1;
+	size_t iter = 5 + strlen(size_in_str) + 1;
 	
 	rewinddir(dr);
 	
 	while((de = readdir(dr)) != NULL){
 	
-		// to avoid recursion on .git, . , and .. directories
-		if(0 == strcmp(de->d_name, ".git") || 0 == strcmp(de->d_name, ".") || 0 == strcmp(de->d_name, "..")){
+		// to avoid recursion on .rec, . , and .. directories
+		if(0 == strcmp(de->d_name, ".rec") || 0 == strcmp(de->d_name, ".") || 0 == strcmp(de->d_name, "..")){
 			continue;
 		}
 		
@@ -124,4 +114,3 @@ char *write_tree(const char *path){
 	
 	return sha_val;
 }
-

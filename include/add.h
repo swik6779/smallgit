@@ -10,7 +10,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-#define INDEX_PATH "./.git/index"
+#define INDEX_PATH "./.rec/index"
 #define MAX_FILE_NAME_SIZE 1024
 
 struct index_entry_det{
